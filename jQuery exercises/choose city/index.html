@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>choose city</title>
+	<script src="../lib/jquery.min.js" ></script>
+	<style type="text/css">
+		*{margin: 0;padding: 0;}
+		body{margin: 30px;}
+		h1{margin-bottom: 20px;}
+		input[type=button]{
+			width: 200px;height: 30px;line-height: 30px;text-align: center;
+			font-size: 20px;font-family: fantasy;color:#999;
+		}
+		ul{list-style: none;width: 198px;border: 1px solid #ccc;font-size: 20px;display: none;}
+		ul>li{height: 20px;line-height: 20px;}
+
+	</style>
+</head>
+<body>
+	<h1>选择城市</h1>
+	<input type="button" name="btn"  id="btn" value="选择城市">
+	<ul>
+		<li>北京</li>
+		<li>上海</li>
+		<li>天津</li>
+		<li>广州</li>
+		<li>深圳</li>
+		<li>...</li>
+	</ul>
+	<script>
+	//此时点击失效，因为事件冒泡，冒泡到body上执行了hide，所以失效
+	// $('#btn').hide();
+	$(function(){
+		$("#btn").on('click',function () {
+			// alert(1);
+
+			$('ul').show();
+			event.stopPropagation();
+			// return false;
+		})
+		$(document).on('click',function () {
+			// alert(2);
+			$('ul').hide();
+		})
+	})
+		
+	</script>
+</html>

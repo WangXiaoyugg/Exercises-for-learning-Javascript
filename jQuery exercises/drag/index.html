@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>drag</title>
+	<script src="../lib/jquery.min.js"></script>
+	<style type="text/css">
+		div{
+			width: 100px;height: 100px;border-radius: 50%;background-color: #f56;
+			position: absolute;text-align: center;line-height: 100px;color:#fff;
+		}
+	</style>
+</head>
+<body>
+	<div>
+		拖拽
+	</div>
+	<script>
+	//问题1，鼠标移动过快，div跟不上？
+		// $('div').on('mousemove',function (e) {
+		// 	$('div').offset({
+		// 		left:e.pageX,
+		// 		top:e.pageY
+		// 	})
+		// })
+	//解决方式，改成document
+	//问题2 点击鼠标左键的时候跟随移动,松开左键取消移动
+	//解决方式，添加mousedown 和mouseup 事件
+	    $(document).on('mousedown',function () {
+	      $(document).on('mousemove',function (e) {
+				$('div').offset({
+					left:e.pageX,
+					top:e.pageY
+				})
+			})
+	       $(document).on('mouseup',function () {
+	          $(document).off('mousemove');
+	       })
+	    })
+	
+	</script>
+</body>
+</html>

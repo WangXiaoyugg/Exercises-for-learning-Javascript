@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>五子棋复习</title>
+	<style type="text/css">
+	canvas{
+		display: block;
+		margin: 50px auto;
+		box-shadow: -2px -2px 2px #efefef,5px 5px 5px #b9b9b9;
+	}
+	</style>
+</head>
+<body>
+	<canvas id="chess" width="450px" height="450px">
+		您的浏览器不支持canvas,请升级浏览器
+	</canvas>
+	<script>
+		var canvas = document.getElementById('chess');
+		var ctx = canvas.getContext('2d');
+		ctx.strokeStyle = "red";
+		var me = false;
+		function drawBoard(){
+				for(var i= 0 ;i<15;i++){
+				ctx.moveTo(15+i*30,15);
+				ctx.lineTo(15+i*30,435);
+				ctx.stroke()
+				ctx.moveTo(15,15+i*30);
+				ctx.lineTo(435,15+i*30);
+				ctx.stroke()
+			}
+		}
+		
+		var logo = new Image();
+		logo.src="logo1.png";
+		logo.onload=function(){
+			ctx.drawImage(logo,0,0,450,450);
+			drawBoard();
+			// oneStep(0,1,false);
+			// oneStep(1,1,true);
+			// for(var i=0 ;i<15;i++){
+			// 	for(var j=0;j<15;j++){
+			// 		ctx.beginPath();
+			// 		ctx.fillStyle='#000';
+			// 		ctx.arc(15+i*30, 15+j*30, 10, 0, Math.PI*2, false);
+			// 		ctx.fill();
+			// 		ctx.closePath();
+			// 	}
+				
+			// }
+			
+		}
+
+		var oneStep = function(i,j,me){
+			ctx.beginPath();
+			ctx.arc(15+i*30,15+j*30,13,0,2*Math.PI);
+			var gradient=ctx.createRadialGradient(15+30*i+2,15+j*30-2, 18,15+30*i+2 , 15+j*30-2 ,0);
+			if(me){
+				gradient.addColorStop(0,'red');
+				gradient.addColorStop(1,'green');
+			}else{
+				gradient.addColorStop(0,'blue');
+				gradient.addColorStop(1,'yellow');
+			}
+			
+			ctx.fillStyle= gradient;
+			ctx.fill();
+			ctx.closePath();
+		}
+		var chessBoard = [];
+		//15个空数组 [[15个0],[15个0],...]
+		for(var i =0 ; i<15;i++){
+			chessBoard[i]=[];
+
+			for(var j=0 ;j<15;j++){
+				chessBoard[i][j]=0;
+				// console.log(chessBoard);
+			}
+		}
+
+		canvas.onclick= function(e){
+			var x = e.offsetX;
+			var y = e.offsetY;
+			var i = Math.floor(x/30);
+			var j = Math.floor(y/30);
+			if( chessBoard[i][j]===0){
+				oneStep(i,j,me)
+				if(me){
+					chessBoard[i][j]=1;
+					//黑旗为1
+					// console.log(chessBoard)
+				}else{
+					chessBoard[i][j]=2;
+					//白旗为2
+					// console.log(chessBoard)
+					
+				}
+				me = !me;
+			}
+		
+		}
+	</script>
+</body>
+</html>

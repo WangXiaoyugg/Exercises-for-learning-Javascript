@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>五子棋</title>
+<style>
+  body,input{padding:0;margin: 0;}  
+  input{background: none;border: 0;box-shadow: 3px 3px 5px 3px #eee;position: absolute;font-size: 14px;border-radius: 10px;-webkit-border-radius: 10px;-moz-border-radius: 10px;outline: none;border:none;}  
+  #main{width: 500px;height: 500px;position: relative;top:80px;left:50%;margin-left: -300px;}  
+  #canvas{box-shadow: 2px 2px 4px 8px #eee;}  
+  #mRight{width: 100px;height: 510px;box-shadow: 2px 2px 4px 8px #eee;position: absolute;top: 0;right: -100px;}  
+  #start,#pause,#reStart{width: 70px;height: 30px;line-height: 30px;}  
+  #start{top:25%;left: 15%;}  
+  .start_hover:hover{box-shadow: 3px 3px 5px 3px yellow;color: #fff;background: #000;cursor: pointer;}  
+  #pause{top:40%;left: 15%;cursor: pointer;display: none;}  
+  #pause:hover{box-shadow: 3px 3px 5px 3px yellow;color: #fff;background: #000;}  
+  #reStart{top:55%;left: 15%;cursor: pointer;display: none;}  
+  #reStart:hover{box-shadow: 3px 3px 5px 3px yellow;color: #fff;background: #000;}  
+  
+  #radio1,#radio2{width: 12px;height: 12px;position: absolute;left: 10%;top:15%;}  
+  #radio2{left:50%;}  
+  label{font-size: 12px;position: absolute;left: 25%;top:14.8%;}  
+  .lb2{left:65%;}  
+</style>
+</head>
+<body>
+
+<div id="main">  
+    </span>
+    <canvas id="canvas"></canvas>  
+    </span>
+    <div id="mRight">  
+    <input type="radio" id="radio1" name="radio" value="true"><label class='lb1' for="radio1">黑棋</label>  
+    <input type="radio" id="radio2" name="radio" value="false"><label class='lb2' for="radio2">白棋</label>  
+    <input type="button" id="pause" value="暂停游戏">  
+    <input type="button" id="reStart" value="重新游戏">  
+    </div>  
+</div>  
+
+<script>
+    var me=true;//默认黑棋  
+    var chessBoard=[];//记录棋盘落子情况  
+    var start=document.getElementById('start');  
+    var pause=document.getElementById('pause');  
+    var reStart=document.getElementById('reStart');  
+    var radio=document.getElementsByName('radio');  
+    var canvas=document.getElementById('canvas');  
+    var context=canvas.getContext('2d');  
+    //canvas画布大小  
+    canvas.width=450;  
+    canvas.height=510;
+    function rd(){  
+            for(var i=0;i<radio.length;i++){                   
+                if(radio[i].checked){  
+                    if(radio[i].value=='false'){  
+                        me=false;  
+                    }  
+                    return 1;  
+                }  
+            }  
+        }  
+    for(var i=0;i<15;i++){  
+              chessBoard[i]=[];  
+            for(var j=0;j<18;j++){  
+              chessBoard[i][j]=0;//代表为空，可以落子  
+            }  
+        }
+    function drawGrid(){  
+                //描边色  
+                context.strokeStyle='#bfbfbf';  
+                for(var i=0;i<15;i++)  
+                {  
+                    //15条竖线  
+                    context.beginPath();  
+                    context.moveTo(15+i*30,45);  
+                    context.lineTo(15+i*30,465);  
+                    context.stroke();  
+                    context.closePath();  
+                      
+                }  
+                for(var i=0;i<18;i++){  
+                    //17条横线  
+                    if(i==0||i==16){  
+                        continue;  
+                    }  
+                    context.beginPath();  
+                    context.moveTo(15,15+i*30);  
+                    context.lineTo(435,15+i*30);  
+                    context.stroke();  
+                    context.closePath();  
+                      
+                }  
+            }
+            function drawChess(i,j,me){//me为黑白棋判断  
+                var gradient=context.createRadialGradient(15+i*30+2,15+j*30-2,13,15+i*30+2,15+j*30-2,0);  
+                if(me){  
+                    gradient.addColorStop(0,'#0a0a0a');//大圆颜色  
+                    gradient.addColorStop(1,'#636766');//小圆颜色  
+                }else{  
+                    gradient.addColorStop(0,'#d1d1d1');//大圆颜色  
+                    gradient.addColorStop(1,'#f9f9f9');//小圆颜色  
+                }  
+                  
+                context.beginPath();  
+                context.arc(15+i*30,15+j*30,13,0,2*Math.PI);  
+                context.closePath();  
+  
+                context.fillStyle=gradient;  
+                context.fill();  
+            }
+            function onclick(t){  
+                canvas.onclick=function(event){  
+                    if(t){  
+                        event=event||window.event;  
+                        var x=event.offsetX;  
+                        var y=event.offsetY;  
+                        //为方便操作，转换为棋盘索引 格子30*30  
+                        var i=Math.floor(x/30);  
+                        var j=Math.floor(y/30);  
+                        //如果棋盘点为空,可以落子  
+                        if(j==0||j==16){  
+                            return;  
+                        }else{  
+                            if(chessBoard[i][j]==0){  
+                                console.log(j);  
+                                drawChess(i, j, me);//画棋子  
+                                chessBoard[i][j] = 1; //黑棋存储为1  
+                                if(me)  
+                                {  
+                                    chessBoard[i][j]=1;//黑棋存储为{1,1}  
+                                }else{  
+                                    chessBoard[i][j]=2//黑棋存储为{2,2}  
+                                }  
+                                me=!me;                   
+                            }  
+                        }  
+                          
+                    }  
+                    else{  
+                        return;  
+                    }  
+  
+                }  
+            }
+            start.onclick=function(){  
+                if(rd()==1){  
+                    for(var i=0;i<chessBoard.length;i++){  
+                        var arr=chessBoard[i];  
+                        for(var j=0;j<arr.length;j++){  
+                            if(me){  
+                                chessBoard[6][16]=1;  
+                                chessBoard[6][0]=2;  
+                            }  
+                            else{  
+                                chessBoard[6][16]=2;  
+                                chessBoard[6][0]=1;  
+                            }  
+                        }  
+                    }  
+                    var lb=document.getElementsByTagName('label');  
+                    for(var i=0;i<lb.length;i++){  
+                        radio[i].style.display='none';  
+                        lb[i].style.display='none';  
+                    }  
+                    play();  
+                    drawChess(6, 16, me);//自己棋子  
+                    drawChess(6, 0, !me);//电脑棋子  
+                    pause.style.display='block';  
+                    reStart.style.display='block';  
+                    this.disabled='true';  
+                    this.className='';  
+                }else{  
+                    fontText('===>>',300,30,'50px',true);  
+                    fontText('请选择棋子 黑棋或者白棋',100,180,'20px',true);  
+                }  
+  
+            }  
+            pause.onclick=function(){  
+                if(pause.value=='暂停游戏'){  
+                    draw_pause(true);  
+                    pause.value='继续游戏';  
+                }  
+                else{  
+                    draw_pause(false);  
+                    pause.value='暂停游戏';  
+                }  
+            }
+            reStart.onclick=function(){  
+                var width = canvas.width;  
+                var height = canvas.height;  
+                canvas.width = width;  
+                canvas.height = height;  
+                //清空chessBoard数组并初始化值为0,可以落子  
+                chessBoard=[];  
+                for(var i=0;i<15;i++){  
+                    chessBoard[i]=[];  
+                    for(var j=0;j<15;j++){  
+                        chessBoard[i][j]=0;//代表为空，可以落子  
+                    }  
+                }  
+                me=true;//恢复默认颜色  
+                pause.style.display='none';  
+                reStart.style.display='none';  
+                start.disabled='';  
+                start.className='start_hover'  
+                var lb=document.getElementsByTagName('label');  
+                for(var i=0;i<lb.length;i++){  
+                    radio[i].style.display='block';  
+                    lb[i].style.display='block';  
+                }  
+  
+            }  
+            function init(){  
+                context.clearRect(0,0,canvas.width,canvas.height);//清空canvas  
+                drawGrid();//绘制棋盘  
+                onclick(true);//点击事件        
+            }
+            function draw_pause(s){  
+                if(s){  
+                    fontText('暂停游戏',100,200,'64px',true);  
+                    onclick(false)//清除点击事件  
+                }  
+                else{  
+                    context.clearRect(0,0,canvas.width,canvas.height);//清空canvas  
+                    // 重新绘制棋盘棋子  
+                    play();  
+                    for(var i=0;i<chessBoard.length;i++){  
+                        var arr=[];  
+                        arr=chessBoard[i];  
+                        for(var j=0;j<18;j++){  
+                            if(arr[j]==1){  
+                                drawChess(i, j, true);//黑棋  
+                            }  
+                            else if(arr[j]==2){  
+                                drawChess(i, j, false);//白棋  
+                            }  
+                        }  
+                    }  
+                }  
+                  
+            }  
+
+</script>
+</body>
+</html>
